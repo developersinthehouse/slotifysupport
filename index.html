@@ -1,0 +1,556 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Slotify: appointment management for professionals</title>
+  <meta name="description" content="Slotify is an Android appointment app for professionals. Publish real availability, let clients book in a few taps, and keep your whole day in one place.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#08080a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f7f9" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Slotify">
+  <meta property="og:title" content="Slotify: appointments, without the back-and-forth">
+  <meta property="og:description" content="Publish real availability. Let clients book in a few taps. An Android appointment app by DEVELOPERS.">
+  <meta property="og:image" content="assets/og.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="The Slotify wordmark above a row of time slots, one of them selected.">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preload" href="fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="modulepreload" href="js/main.js">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="app.css">
+  <script>
+    /* Set the theme before first paint so there is no flash. Falls back to the system setting. */
+    try { var t = localStorage.getItem('slotify-site-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+    document.documentElement.classList.add('js');
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Slotify",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Android",
+    "description": "An appointment management app for professionals and the people who book them: availability, bookings, reminders and an optional online payment step.",
+    "publisher": { "@type": "Organization", "name": "DEVELOPERS" }
+  }
+  </script>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": "Who is Slotify for?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Anyone who works by appointment: advocates, doctors, consultants, tutors, therapists, freelancers and small businesses. The scheduling engine knows nothing about any one profession. Wording, services, extra questions, hours and rules are settings."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Do clients need an account to book?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. Clients sign in with an email address, find a professional by their link name, and book from the Book tab. Their bookings, notifications and profile live in that account."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can two people book the same time?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. Every booking is checked again on the server against your hours, breaks, days off, notice period and existing bookings, and the database refuses an overlapping booking even if two people tap the same time at the same moment."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can I approve each booking myself?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes. You can confirm bookings instantly or review each request first. A request stays Pending until you confirm or decline it, and the client is notified."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Can clients cancel or reschedule?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Yes, until the cut-off you have set. After that they are asked to contact you. Either side can add a short reason, which the other person sees."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Are online payments required?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "No. They are optional and off by default. You can turn them on, including deposits and refunds, after finishing payout setup with Razorpay."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Which devices does it run on?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Slotify is an Android app today."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "What does a client see about my track record?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "Counts only: bookings handled, completed, cancelled and rescheduled, with completion and cancellation rates. The rates count only bookings that have finished. No client details are ever included."
+        }
+      },
+      {
+        "@type": "Question",
+        "name": "Who builds Slotify?",
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": "DEVELOPERS, the team behind Slotify. We design and build software that helps professionals run their day with less friction."
+        }
+      }
+    ]
+  }
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+  <canvas id="stage" aria-hidden="true"></canvas>
+
+  <header class="top" id="header">
+    <div class="wrap top-in">
+      <a class="brand" href="#top" aria-label="Slotify, back to the top">
+        <img class="logo logo-on-dark" src="assets/logo-on-dark.webp" alt="" width="360" height="116">
+        <img class="logo logo-on-light" src="assets/logo-on-light.webp" alt="" width="360" height="116">
+      </a>
+      <nav class="nav" id="nav" aria-label="Main">
+        <a href="#how">How it works</a>
+        <a href="#app">The app</a>
+        <a href="#rules">Try the rules</a>
+        <a href="#features">Features</a>
+        <a href="#faq">FAQ</a>
+      </nav>
+      <div class="top-actions">
+        <button class="theme-btn" type="button" id="theme" aria-label="Switch colour theme"><span class="theme-disc" aria-hidden="true"></span></button>
+        <a class="btn btn-primary btn-sm" href="#get" data-cta-label>Get the app</a>
+        <button class="menu-btn" type="button" id="menu" aria-expanded="false" aria-controls="nav">Menu</button>
+      </div>
+    </div>
+    <div class="progress" aria-hidden="true"><i id="progress"></i></div>
+  </header>
+
+  <nav class="dayrule" id="dayrule" aria-label="Sections">
+    <a href="#top" data-for="top"><span>Start</span></a>
+    <a href="#about" data-for="about"><span>The idea</span></a>
+    <a href="#how" data-for="how"><span>How it works</span></a>
+    <a href="#app" data-for="app"><span>The app</span></a>
+    <a href="#rules" data-for="rules"><span>Try the rules</span></a>
+    <a href="#features" data-for="features"><span>Features</span></a>
+    <a href="#faq" data-for="faq"><span>Questions</span></a>
+    <a href="#get" data-for="get"><span>Get Slotify</span></a>
+  </nav>
+
+  <main id="main">
+    <!-- ============ 9:00 AM · Hero ============ -->
+    <section class="hero" id="top" data-scene="field" data-pose="hero" aria-labelledby="h1">
+      <div class="wrap hero-in">
+        <p class="eyebrow"><span class="t" aria-hidden="true">9:00 AM</span>Appointment management for professionals</p>
+        <h1 id="h1" class="rise">Appointments, without the back&#8209;and&#8209;forth.</h1>
+        <p class="lede">Slotify lets a professional publish real availability and lets clients book it in a few taps. Hours, breaks, days off and booking rules are set once; the app does the rest.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#get" data-cta-label data-magnet>Get the app</a>
+          <a class="link-arrow" href="#how">See how it works</a>
+        </div>
+        <p class="meta">Android app &middot; Built by DEVELOPERS</p>
+      </div>
+
+      <figure class="ruler" id="ruler" aria-hidden="true">
+        <div class="ruler-track">
+          <span class="slot" data-i="0"></span><span class="slot" data-i="1"></span><span class="slot" data-i="2"></span><span class="slot" data-i="3"></span>
+          <span class="slot is-pick" data-i="4"></span><span class="slot" data-i="5"></span><span class="slot" data-i="6"></span><span class="slot" data-i="7"></span>
+          <span class="slot" data-i="8"></span><span class="slot" data-i="9"></span><span class="slot" data-i="10"></span><span class="slot" data-i="11"></span>
+          <span class="slot" data-i="12"></span><span class="slot" data-i="13"></span><span class="slot" data-i="14"></span><span class="slot" data-i="15"></span>
+        </div>
+        <div class="ruler-axis"><span>9 AM</span><span>11</span><span>1 PM</span><span>3</span><span>5</span></div>
+      </figure>
+
+      <div class="wrap hero-foot">
+        <ul class="keys" aria-label="Key">
+          <li><span class="key key-open"></span>Open</li>
+          <li><span class="key key-taken"></span>Booked</li>
+          <li><span class="key key-break"></span>Break or day off</li>
+          <li><span class="key key-pick"></span><span id="ruler-pick">Selected 11:00 AM</span></li>
+        </ul>
+        <p class="hero-note">Each row is a day and each pill a half-hour. Open times are worked out from your working hours, your break, days off and the bookings you already have. This is an illustration of the idea, not live data.<span class="hint-touch"> Tap a pill to try one.</span><span class="hint-hover"> Move over the pills, or click one.</span></p>
+      </div>
+      <div class="pick-chip" id="pick-chip" aria-hidden="true"></div>
+    </section>
+
+    <!-- ============ 10:00 AM · The idea ============ -->
+    <section class="chapter about" id="about" data-scene="ring" data-pose="ring" aria-labelledby="about-h">
+      <div class="wrap about-grid">
+        <div class="about-copy">
+          <p class="eyebrow"><span class="t" aria-hidden="true">10:00 AM</span>The idea</p>
+          <h2 id="about-h" class="rise">One page for the professional. One place for the client.</h2>
+          <p class="big reveal">Slotify has two sides. A professional sets up a practice page with services, hours and rules. A client finds that page by its link name, sees only the times that are really free, and books one.</p>
+          <p class="reveal plain">It is made for people who work by appointment: advocates, doctors, consultants, tutors, therapists, freelancers and small businesses. The scheduling engine knows nothing about any one profession. Wording, services, extra questions, hours and rules are all settings, so the same app fits a clinic and a tutoring practice.</p>
+          <dl class="wording reveal" aria-label="Example: your own wording">
+            <div><dt>A clinic says</dt><dd>Patient, Consultation</dd></div>
+            <div><dt>A tutor says</dt><dd>Student, Lesson</dd></div>
+            <div><dt>A consultant says</dt><dd>Client, Appointment</dd></div>
+          </dl>
+          <p class="note reveal">Every label in the app follows the wording you choose in setup.</p>
+        </div>
+        <div class="about-dial" aria-hidden="true" id="dial" data-anchor>
+          <div class="dial-fallback" id="dial-fallback"></div>
+          <span class="tag" data-ring="18">Opens 9:00 AM</span>
+          <span class="tag" data-ring="26">Break 1 to 2 PM</span>
+          <span class="tag" data-ring="34">Closes 5:00 PM</span>
+          <span class="tag tag-pick" data-ring="22">Selected 11:00 AM</span>
+          <p class="dial-cap">A day, round the clock in half-hour slots. Outside your hours nothing is offered, and the break stays free.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 11:00 AM · How it works (pinned) ============ -->
+    <section class="journey" id="how" data-scene="lane" data-pose="lane" aria-labelledby="how-h">
+      <div class="journey-pin">
+        <div class="wrap journey-grid">
+          <div class="journey-copy">
+            <p class="eyebrow"><span class="t" aria-hidden="true">11:00 AM</span>How it works</p>
+            <h2 id="how-h" class="rise">From an empty account to a booked appointment.</h2>
+            <p class="muted j-sub">In the order it really happens.</p>
+            <ol class="j-steps" id="j-steps">
+              <li class="j-step is-active" data-step="0" data-screen="setup">
+                <h3 class="j-head"><span class="step-n" aria-hidden="true">1</span><span class="j-title">Set up your practice</span></h3>
+                <div class="j-body"><div><p>Add your services, each with a duration, an optional price and optional questions for the client. Choose working days and hours, a daily break, days off, how much notice you need, how far ahead people can book, and a daily limit.</p></div></div>
+              </li>
+              <li class="j-step" data-step="1" data-screen="review">
+                <h3 class="j-head"><span class="step-n" aria-hidden="true">2</span><span class="j-title">Get reviewed, then go live</span></h3>
+                <div class="j-body"><div><p>New professional pages are reviewed before clients can see them. You are notified of every decision, with the reviewer&rsquo;s note if there is one.</p></div></div>
+              </li>
+              <li class="j-step" data-step="2" data-screen="page">
+                <h3 class="j-head"><span class="step-n" aria-hidden="true">3</span><span class="j-title">Share your link name</span></h3>
+                <div class="j-body"><div><p>Your page shows your photo, services, hours, booking policy, contact details and social links, and a track record. Copy your link or share it on WhatsApp from the dashboard.</p></div></div>
+              </li>
+              <li class="j-step" data-step="3" data-screen="book">
+                <h3 class="j-head"><span class="step-n" aria-hidden="true">4</span><span class="j-title">Clients pick a time</span></h3>
+                <div class="j-body"><div><p>A client chooses a service, then a date and a time from live availability, answers your questions and sees the price, or &ldquo;Free&rdquo;. If you have turned payments on, they can pay at this step.</p></div></div>
+              </li>
+              <li class="j-step" data-step="4" data-screen="notif">
+                <h3 class="j-head"><span class="step-n" aria-hidden="true">5</span><span class="j-title">You respond, everyone is reminded</span></h3>
+                <div class="j-body"><div><p>Confirm instantly or review each request. Notifications arrive in the app and on the phone, with a reminder an hour before. Clients can reschedule or cancel until your cut-off.</p></div></div>
+              </li>
+            </ol>
+          </div>
+          <div class="journey-phone">
+            <div class="phone3d" id="phone-j" data-app="dark" aria-hidden="true">
+              <div class="p3-rot"><div class="p3-body">
+                <div class="phone p3-front"><div class="phone-in">
+                  <div class="screen is-on" data-screen="setup">
+                    <div class="a-scroll">
+                      <p class="a-title">Practice setup</p>
+                      <p class="a-h">Working hours</p>
+                      <div class="a-card">
+                        <div class="a-wd"><span class="on">M</span><span class="on">T</span><span class="on">W</span><span class="on">T</span><span class="on">F</span><span>S</span><span>S</span></div>
+                        <div class="a-two"><div><small>Opens</small><b>9:00 AM</b></div><div><small>Closes</small><b>5:00 PM</b></div></div>
+                        <div class="a-sw"><span><b>Daily break</b><small>1:00 PM to 2:00 PM</small></span><i class="sw on"></i></div>
+                      </div>
+                      <p class="a-h">Booking rules</p>
+                      <div class="a-card a-list">
+                        <p>Start times every<strong>30 minutes</strong></p>
+                        <p>Minimum notice<strong>2 hours</strong></p>
+                        <p>Appointments per day<strong>No limit</strong></p>
+                      </div>
+                      <p class="a-h">Services</p>
+                      <div class="a-card a-list"><p>Consultation, 30 min<strong>Free</strong></p><p>Follow-up, 90 min<strong>&#8377;1,500</strong></p></div>
+                    </div>
+                    <div class="a-nav"><span>Dashboard</span><span>Agenda</span><span class="on">Schedule</span><span>Account</span></div>
+                  </div>
+                  <div class="screen" data-screen="review">
+                    <div class="a-status">
+                      <span class="a-hourglass" aria-hidden="true"></span>
+                      <b>Application under review</b>
+                      <p>Thanks for applying. We check every new professional before their page goes live. You will get a notification as soon as there is a decision.</p>
+                      <span class="a-btn a-btn-main">Check status</span>
+                      <span class="a-btn">Continue as a client</span>
+                    </div>
+                  </div>
+                  <div class="screen" data-screen="page">
+                <div class="a-scroll">
+                  <div class="a-biz">
+                    <span class="a-logo" aria-hidden="true">S</span>
+                    <b>Sample Practice</b>
+                    <span class="a-sub">Consultant</span>
+                    <span class="a-chip">Confirmed by Sample Practice</span>
+                  </div>
+                  <p class="a-h">Track record</p>
+                  <div class="a-card">
+                    <div class="a-figs">
+                      <div><b>14</b><small>Bookings</small></div>
+                      <div><b class="ok">69%</b><small>Completion rate</small></div>
+                      <div><b>23%</b><small>Cancellation rate</small></div>
+                    </div>
+                    <div class="a-out" aria-hidden="true"><span class="o-ok"></span><span class="o-bad"></span><span class="o-warn"></span></div>
+                    <p class="a-fine"><i class="d d-ok"></i>9 completed <i class="d d-bad"></i>3 cancelled <i class="d d-warn"></i>1 no-show</p>
+                    <p class="a-fine2">Rates count bookings that have reached an outcome; upcoming ones are not included.</p>
+                  </div>
+                  <p class="a-h">Contact</p>
+                  <div class="a-card a-list">
+                    <p><i class="r r-phone"></i>+91 98765 43210</p>
+                    <p><i class="r r-mail"></i>hello@samplepractice.example</p>
+                    <p><i class="r r-web"></i>Website <span>&middot; samplepractice.example</span><em aria-hidden="true">&#8599;</em></p>
+                    <p><i class="r r-ig"></i>Instagram <span>&middot; @samplepractice</span><em aria-hidden="true">&#8599;</em></p>
+                  </div>
+                  <p class="a-h">Services</p>
+                  <div class="a-card a-list">
+                    <p>Consultation, 30 min<strong>Free</strong></p>
+                    <p>Follow-up, 90 min<strong>&#8377;1,500</strong></p>
+                  </div>
+                </div>
+                <div class="a-nav"><span class="on">Book</span><span>Appointments</span><span>Account</span></div>
+                  </div>
+                  <div class="screen" data-screen="book">
+                <div class="a-scroll">
+                  <p class="a-title">Pick a date and time</p>
+                  <div class="a-days" role="presentation">
+                    <span><small>Tue</small>3</span><span class="on"><small>Wed</small>4</span><span><small>Thu</small>5</span><span><small>Fri</small>6</span><span><small>Mon</small>9</span>
+                  </div>
+                  <p class="a-h">Morning</p>
+                  <div class="a-times"><span>9:00</span><span>9:30</span><span class="on">10:00</span><span>11:30</span></div>
+                  <p class="a-h">Afternoon</p>
+                  <div class="a-times"><span>2:00</span><span>2:30</span><span>3:30</span><span>4:00</span></div>
+                  <p class="a-h">Evening</p>
+                  <p class="a-none">No times left on this day.</p>
+                </div>
+                <div class="a-cta"><span>Continue</span></div>
+                  </div>
+                  <div class="screen" data-screen="notif">
+                    <div class="a-scroll">
+                      <p class="a-title">Notifications</p>
+                      <div class="a-note is-new"><i class="a-dot"></i><span><b>New request</b><small>Meera Shah &middot; Consultation &middot; Wed, 4 Nov at 10:00 AM</small></span></div>
+                      <div class="a-note"><i class="a-dot"></i><span><b>Upcoming appointment</b><small>Consultation &middot; Wed, 4 Nov at 10:00 AM</small></span></div>
+                      <div class="a-note"><i class="a-dot"></i><span><b>Meera Shah cancelled</b><small>Follow-up &middot; Tue, 3 Nov at 3:30 PM</small></span></div>
+                    </div>
+                    <div class="a-nav"><span>Dashboard</span><span>Agenda</span><span>Schedule</span><span>Account</span></div>
+                  </div>
+                  <span class="p3-glare"></span>
+                </div></div>
+              </div></div>
+            </div>
+            <p class="j-cap small muted">Illustrations of the app&rsquo;s screens, drawn with its colours and wording. Names and numbers are sample data.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 12:30 PM · The app, layer by layer (pinned) ============ -->
+    <section class="anatomy" id="app" data-scene="field" data-pose="top" aria-labelledby="app-h">
+      <div class="anat-pin">
+        <div class="wrap anat-grid">
+          <div class="anat-copy">
+            <p class="eyebrow"><span class="t" aria-hidden="true">12:30 PM</span>The app</p>
+            <h2 id="app-h" class="rise">The professional&rsquo;s day, layer by layer.</h2>
+            <p class="muted">The dashboard is what a professional sees first. Pull it apart and each layer answers one question.</p>
+            <ul class="anat-list" id="anat-list">
+              <li data-layer="head"><b>Greeting and date</b><div class="al-body"><div><span>Who is signed in, and what day it is.</span></div></div></li>
+              <li data-layer="today"><b>Today at a glance</b><div class="al-body"><div><span>What is left, what is done and who is next.</span></div></div></li>
+              <li data-layer="quick"><b>Quick actions</b><div class="al-body"><div><span>My page, Copy link, Share and Block days, one tap away.</span></div></div></li>
+              <li data-layer="book"><b>Bookings</b><div class="al-body"><div><span>The last 30 days, the next 7 days and the last 7 days, with a completion rate.</span></div></div></li>
+              <li data-layer="page"><b>Your page</b><div class="al-body"><div><span>A short checklist for completing your public page.</span></div></div></li>
+              <li data-layer="nav"><b>Navigation</b><div class="al-body"><div><span>Dashboard, Agenda, Schedule and Account.</span></div></div></li>
+            </ul>
+            <div class="seg" role="group" aria-label="App theme in the preview">
+              <button type="button" data-app-theme="dark" aria-pressed="true">Dark</button>
+              <button type="button" data-app-theme="light" aria-pressed="false">Light</button>
+            </div>
+            <p class="small muted">Both themes ship in the app. Choose Light, Dark or System in Settings. Names and numbers here are sample data.</p>
+          </div>
+          <div class="anat-stage">
+            <div class="phone3d anat-phone" id="phone-a" data-app="dark" aria-hidden="true">
+              <div class="p3-rot"><div class="p3-body">
+                <div class="phone p3-front"><div class="phone-in anat-in">
+                  <div class="a-scroll al-stack">
+                    <div class="al al-head" data-layer="head">
+                      <div class="a-head"><span class="a-avatar">A</span><span class="a-greet"><small>Good morning</small><b>Asha Rao</b></span><span class="a-date">Tue, 3 Nov</span></div>
+                    </div>
+                    <div class="al al-today" data-layer="today">
+                      <p class="a-h">Today at a glance</p>
+                      <div class="a-hero">
+                        <div class="a-tile a-big"><small>Left today</small><b>2</b><span>of 3 appointments</span></div>
+                        <div class="a-tile a-done"><small>Done</small><b>1 of 3</b></div>
+                        <div class="a-tile a-next"><small>Next up &middot; Today</small><b>9:30 &ndash; 10:00 AM</b><span>Meera Shah, Consultation</span></div>
+                      </div>
+                    </div>
+                    <div class="al al-quick" data-layer="quick">
+                      <div class="a-quick"><span><i class="q q-page"></i>My page</span><span><i class="q q-copy"></i>Copy link</span><span><i class="q q-share"></i>Share</span><span><i class="q q-block"></i>Block days</span></div>
+                    </div>
+                    <div class="al al-book" data-layer="book">
+                      <p class="a-h">Bookings</p>
+                      <div class="a-card">
+                        <div class="a-seg"><span class="on">Last 30 days</span><span>Next 7 days</span><span>Last 7 days</span></div>
+                        <div class="a-ring-row">
+                          <div class="a-ring"><b>11</b></div>
+                          <ul class="a-legend">
+                            <li><i class="d d-ok"></i>Completed<b>6</b></li>
+                            <li><i class="d d-open"></i>Open<b>2</b></li>
+                            <li><i class="d d-warn"></i>No-shows<b>1</b></li>
+                            <li><i class="d d-bad"></i>Cancelled<b>2</b></li>
+                          </ul>
+                        </div>
+                        <p class="a-rate">67% completion rate</p>
+                      </div>
+                    </div>
+                    <div class="al al-page" data-layer="page">
+                      <p class="a-h">Your page</p>
+                      <div class="a-card a-check"><div class="a-prog"><span class="a-bar"><i></i></span><b>3 of 5</b></div><p>Add a website or social link<small>Optional, and one tap to open</small></p></div>
+                    </div>
+                  </div>
+                  <div class="al al-nav a-nav" data-layer="nav"><span class="on">Dashboard</span><span>Agenda</span><span>Schedule</span><span>Account</span></div>
+                  <span class="p3-glare"></span>
+                </div></div>
+              </div></div>
+            </div>
+            <ul class="al-labels" id="al-labels" aria-hidden="true"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 2:00 PM · Try the rules ============ -->
+    <section class="rules" id="rules" data-scene="lane" data-pose="lane2" aria-labelledby="rules-h">
+      <div class="wrap">
+        <div class="rules-head">
+          <p class="eyebrow"><span class="t" aria-hidden="true">2:00 PM</span>Try the rules</p>
+          <h2 id="rules-h" class="rise">Change a rule. Watch the day change.</h2>
+          <p class="muted">The same steps the app takes to work out open times: your hours, the break, existing bookings, the gap after each appointment, minimum notice and the daily limit. The bookings and times below are sample data, and nothing here is saved.</p>
+        </div>
+        <div id="sim-root" class="sim" hidden></div>
+        <noscript><p class="muted">This demonstration needs JavaScript.</p></noscript>
+        <div class="more-ways reveal">
+          <h3>More ways to set it up</h3>
+          <ul>
+            <li><b>A freelancer who wants a deposit.</b> Switch on online payments and take a deposit at booking. Refunds are supported, and every payment is verified on the server.</li>
+            <li><b>A solo practice sharing one link.</b> Send your link name by message, or share it to WhatsApp straight from the dashboard. Clients open your page and book without calling.</li>
+          </ul>
+          <p class="note">These describe configurations, not customers.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 3:30 PM · Features ============ -->
+    <section class="features" id="features" data-scene="field" data-pose="top" aria-labelledby="feat-h">
+      <div class="wrap feat-grid">
+        <div class="feat-head">
+          <p class="eyebrow"><span class="t" aria-hidden="true">3:30 PM</span>Features</p>
+          <h2 id="feat-h" class="rise">What it does, and why it matters.</h2>
+          <p class="muted">Everything here is in the app today.</p>
+        </div>
+        <ul class="feat-list">
+          <li class="feat-item reveal"><i class="g g-avail" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b><b></b><b></b></i><div><h3>Real availability</h3><p>Open times come from your working days and hours, daily break, days off, notice period, booking window and daily limit, so clients are never offered a time you cannot take.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-double" aria-hidden="true"><b></b><b></b><b></b></i><div><h3>No double bookings</h3><p>Every booking is checked again on the server, and the database itself refuses an overlap, even if two people tap the same time at the same moment.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-serv" aria-hidden="true"><b></b><b></b><b></b><b></b></i><div><h3>Services that fit the work</h3><p>Each service has its own duration, an optional price and optional questions (some required) that the client answers while booking. Times are kept in your own time zone.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-conf" aria-hidden="true"><b></b><b></b></i><div><h3>Confirmation your way</h3><p>Confirm instantly, or review each request first. You can confirm, decline, reschedule, cancel, complete or mark a no-show. Clients see where their request stands.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-limit" aria-hidden="true"><b></b><b></b><b></b><b></b><b></b><b></b><b></b></i><div><h3>Changes with clear limits</h3><p>Clients can reschedule or cancel until a cut-off you set, with an optional reason the other side can read. After the cut-off they are pointed to your contact details.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-notif" aria-hidden="true"><b></b></i><div><h3>Notifications that arrive</h3><p>Alerts appear in the app and on the phone, with a reminder an hour before an appointment. Each category can be switched on or off, and the phone uses one Slotify sound.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-trust" aria-hidden="true"><b></b><b></b><b></b></i><div><h3>A page clients can trust</h3><p>A track record of bookings handled, completed, cancelled and rescheduled, with completion and cancellation rates. It is computed on the server, counts only finished bookings in its rates, and never includes client details.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-glance" aria-hidden="true"><b></b></i><div><h3>Your day at a glance</h3><p>The dashboard shows what is left today, what is done, who is next, what is waiting for your reply, and your bookings over 30 days, the next 7 and the last 7, with a checklist for finishing your page.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-pay" aria-hidden="true"><b></b></i><div><h3>Optional online payments</h3><p>Off until a professional turns them on. Payments run through Razorpay, with deposits and refunds, and are verified on the server. Setting this up needs your own Razorpay account and its activation.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-theme" aria-hidden="true"><b></b><b></b></i><div><h3>Light, dark and calm motion</h3><p>Choose a Light, Dark or System theme, and standard, reduced or no animation. The reduced setting follows the phone&rsquo;s own accessibility setting.</p></div></li>
+          <li class="feat-item reveal"><i class="g g-owner" aria-hidden="true"><b></b><b></b><b></b><b></b></i><div><h3>Control for the platform owner</h3><p>A separate admin console reviews professional applications, manages users and appointments, and oversees payments, payouts and refunds. Every action is written to an audit log.</p></div></li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============ 4:30 PM · Good to know ============ -->
+    <section class="know" id="know" data-scene="field" data-pose="none" aria-labelledby="know-h">
+      <div class="wrap split">
+        <div class="split-head"><p class="eyebrow"><span class="t" aria-hidden="true">4:30 PM</span>Good to know</p><h2 id="know-h" class="rise">What Slotify is today, stated plainly.</h2></div>
+        <ul class="plain-list reveal">
+        <li><b>Android only.</b> There is no iPhone or web booking app yet.</li>
+        <li><b>Clients sign in.</b> Booking needs an account, so bookings and notifications stay with the right person.</li>
+        <li><b>One practice, one professional.</b> Staff members and branches are not part of the app yet.</li>
+        <li><b>One block of hours per day</b> in setup, applied to the days you choose, with a daily break.</li>
+        <li><b>Payments need your own Razorpay account</b> and its activation. Slotify works fully without them.</li>
+      </ul>
+      </div>
+    </section>
+
+    <!-- ============ 4:45 PM · FAQ ============ -->
+    <section class="faqs" id="faq" data-scene="field" data-pose="none" aria-labelledby="faq-h">
+      <div class="wrap split">
+        <div class="split-head sticky"><p class="eyebrow"><span class="t" aria-hidden="true">4:45 PM</span>Questions</p><h2 id="faq-h" class="rise">Questions</h2></div>
+        <div class="faq reveal">
+          <details><summary>Who is Slotify for?</summary><p>Anyone who works by appointment: advocates, doctors, consultants, tutors, therapists, freelancers and small businesses. The scheduling engine knows nothing about any one profession. Wording, services, extra questions, hours and rules are settings.</p></details>
+          <details><summary>Do clients need an account to book?</summary><p>Yes. Clients sign in with an email address, find a professional by their link name, and book from the Book tab. Their bookings, notifications and profile live in that account.</p></details>
+          <details><summary>Can two people book the same time?</summary><p>No. Every booking is checked again on the server against your hours, breaks, days off, notice period and existing bookings, and the database refuses an overlapping booking even if two people tap the same time at the same moment.</p></details>
+          <details><summary>Can I approve each booking myself?</summary><p>Yes. You can confirm bookings instantly or review each request first. A request stays Pending until you confirm or decline it, and the client is notified.</p></details>
+          <details><summary>Can clients cancel or reschedule?</summary><p>Yes, until the cut-off you have set. After that they are asked to contact you. Either side can add a short reason, which the other person sees.</p></details>
+          <details><summary>Are online payments required?</summary><p>No. They are optional and off by default. You can turn them on, including deposits and refunds, after finishing payout setup with Razorpay.</p></details>
+          <details><summary>Which devices does it run on?</summary><p>Slotify is an Android app today.</p></details>
+          <details><summary>What does a client see about my track record?</summary><p>Counts only: bookings handled, completed, cancelled and rescheduled, with completion and cancellation rates. The rates count only bookings that have finished. No client details are ever included.</p></details>
+          <details><summary>Who builds Slotify?</summary><p>DEVELOPERS, the team behind Slotify. We design and build software that helps professionals run their day with less friction.</p></details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ 5:00 PM · Get ============ -->
+    <section class="get" id="get" data-scene="word" data-pose="word" aria-labelledby="get-h">
+      <div class="wrap get-in">
+        <h2 id="get-h">Get Slotify</h2>
+        <p class="lede">Slotify is an Android app. Professionals set up a practice and share a link name; clients install the app, sign in and book.</p>
+        <div class="hero-cta" id="get-actions">
+          <a class="btn btn-primary" id="get-app" href="#get" data-magnet hidden>Download for Android</a>
+          <a class="btn btn-quiet" id="get-mail" href="#get" hidden>Contact DEVELOPERS</a>
+        </div>
+        <p class="meta" id="get-note" hidden></p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <div class="wrap">
+      <div class="foot-grid">
+        <div>
+          <img class="logo logo-on-dark" src="assets/logo-on-dark.webp" alt="Slotify" width="360" height="116" loading="lazy">
+          <img class="logo logo-on-light" src="assets/logo-on-light.webp" alt="Slotify" width="360" height="116" loading="lazy">
+          <p class="muted small">Appointments, without the back-and-forth.</p>
+        </div>
+        <nav aria-label="Product">
+          <h2 class="foot-h">Product</h2>
+          <ul>
+            <li><a href="#how">How it works</a></li>
+            <li><a href="#app">The app</a></li>
+            <li><a href="#rules">Try the rules</a></li>
+            <li><a href="#features">Features</a></li>
+            <li><a href="#faq">Questions</a></li>
+          </ul>
+        </nav>
+        <nav aria-label="Company">
+          <h2 class="foot-h">Company</h2>
+          <ul>
+            <li><span>Built by DEVELOPERS</span></li>
+            <li><a href="#get">Get Slotify</a></li>
+            <li id="foot-mail" hidden><a href="#get">Contact</a></li>
+            <li id="foot-privacy" hidden><a href="#get">Privacy</a></li>
+            <li id="foot-terms" hidden><a href="#get">Terms</a></li>
+          </ul>
+        </nav>
+      </div>
+      <p class="small muted copy">&copy; <span id="year">2026</span> DEVELOPERS. Slotify is an Android app.</p>
+    </div>
+  </footer>
+
+  <script src="site.config.js"></script>
+  <script src="site.js" defer></script>
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>

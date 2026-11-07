@@ -1,0 +1,14 @@
+{
+  "name": "slotify-website",
+  "private": true,
+  "version": "2.0.0",
+  "description": "Slotify public website. A static site: no build step and no runtime dependencies.",
+  "type": "module",
+  "scripts": {
+    "serve": "python3 tools/serve.py 8081",
+    "test": "node tests/site.test.mjs",
+    "test:plain": "node tests/site.test.mjs --plain",
+    "test:rules": "node js/sim/engine.test.mjs",
+    "stamp": "node tools/stamp-site-url.mjs"
+  }
+}
