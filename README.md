@@ -1,6 +1,6 @@
 # Slotify website
 
-The public product site for Slotify, built by DEVELOPERS. It is a static site: one HTML page, two stylesheets, plain JavaScript modules and bundled fonts. No build step, no runtime dependencies, no tracking, no cookies, and no network requests beyond its own files. It stores one value in the browser (`slotify-site-theme`) only when a visitor uses the theme button.
+The public product site for Slotify, built by DEVELOPERS. It is a static site: two HTML pages, three stylesheets, plain JavaScript modules and bundled fonts. No build step, no runtime dependencies, no tracking, no cookies, and no network requests beyond its own files. It stores one value in the browser (`slotify-site-theme`) only when a visitor uses the theme button.
 
 ## What it is
 
@@ -38,11 +38,23 @@ Query switches, mainly for testing: `?fx=0` forces the plain page; `?gl=soft` le
 ## Before you publish
 
 1. Edit `site.config.js` (all optional, all public):
-   - `appUrl`: where people download the Android app. While empty, the "Get the app" buttons scroll to the Get Slotify section, which shows no download button.
+   - `appUrl`: where people download the Android app. This URL powers the homepage download button and the button on `download.html`. While empty, the homepage buttons lead to the Get Slotify section and the download page explains that the link is not ready yet.
    - `supportEmail`: shows a "Contact DEVELOPERS" button and a footer link.
    - `privacyUrl`, `termsUrl`: footer links, shown only when set. Only `http(s)` addresses are accepted.
-2. Run `node tools/stamp-site-url.mjs https://your-domain.example` once. It writes the canonical address and absolute `og:image` into `index.html` and creates `sitemap.xml` and the Sitemap line in `robots.txt` (social previews need absolute addresses).
-3. Upload the whole folder to any static host (Netlify, Vercel, Cloudflare Pages, Firebase Hosting, GitHub Pages, nginx) over HTTPS. Use a different address from the admin console, and do not link the admin console from this site.
+2. Run `node tools/stamp-site-url.mjs https://your-domain.example` once. It writes canonical addresses and absolute `og:image` URLs into both pages, then creates `sitemap.xml` with both pages and adds its address to `robots.txt` (social previews need absolute addresses).
+3. Upload the whole folder to any static host (Render, Netlify, Vercel, Cloudflare Pages, Firebase Hosting, GitHub Pages, nginx) over HTTPS. Use a different address from the admin console, and do not link the admin console from this site.
+
+## Render par deploy (Hindi)
+
+Yeh ek **static website** hai. Isliye Render par ise **Static Site** ke roop mein banayein, Web Service ke roop mein nahi. Is project ke liye build ya server start karne ki koi command nahi hai.
+
+1. `site.config.js` mein `appUrl` ko apne public Play Store ya app download URL se set karein. Yeh value public hoti hai; yahan password ya secret na daalein. Changes GitHub repository mein push karein.
+2. Render Dashboard mein **New + → Static Site** chunein aur GitHub repository connect karein.
+3. Settings mein apni deploy branch chunein. Root Directory khaali chhodein (ya `.`), **Build Command khaali chhodein**; agar Render value maange to `echo "No build step needed"` daalein. **Publish Directory** mein `.` daalein.
+4. **Create Static Site** par click karein. Render files publish karke website ka URL dega; deploy ke baad homepage ka **Download** link aur `https://aapka-render-url.onrender.com/download.html` check karein.
+5. Canonical URL aur sitemap banane ke liye final website address milne ke baad `node tools/stamp-site-url.mjs https://aapka-render-url.onrender.com` chalayein (custom domain use kar rahe hain to uska address dein). Changed files commit karke push karein; Render dobara deploy kar dega.
+
+**Render par kya run karna hai?** Koi real build ya Start command nahi hai. Zaroorat padne par `echo "No build step needed"` sirf khaali build step ki jagah hai; website ko Python/Node server ya dependency install nahi chahiye—Render static files serve karta hai. Agli baar GitHub par push karne par Render automatic deploy kar sakta hai.
 
 Recommended headers:
 ```
@@ -52,14 +64,17 @@ Cache-Control: public, max-age=31536000, immutable   (for /fonts/* and /assets/*
 ```
 The page loads only its own files. It has one executable inline script (it sets the theme before first paint), two inline JSON-LD blocks (data, not executed), no inline `style` attributes, no `eval` and no third-party requests. If you add a Content-Security-Policy, allow `script-src 'self'` plus the hash of that one inline script (or `'unsafe-inline'`). The page has not been run under a CSP here, so check it in your browser's console after you add one.
 
-Weight: HTML 9 KB, CSS 12 KB and JavaScript 39 KB gzipped (36 KB of the JavaScript is the 3D scene, the chapters and the simulator); four Inter weights 67 KB as woff2 (Latin subset); the wordmark 20 to 23 KB.
+The homepage weighs about 9 KB of HTML, 12 KB of CSS and 39 KB of JavaScript when gzipped (36 KB of the JavaScript is the 3D scene, the chapters and the simulator). The download page adds about 1.7 KB of gzipped HTML and 2.3 KB of gzipped CSS and JavaScript. Four Inter weights are 67 KB as woff2 (Latin subset); the wordmark is 20 to 23 KB.
 
 ## Run it locally
 
 ```
 python3 tools/serve.py 8081      # then open http://localhost:8081
 ```
-On Windows, run `RUN_SITE.ps1` in this folder (or `RUN_WEBSITE.ps1` in the bundle). Use `tools/serve.py` rather than `python -m http.server`: on some Windows computers Python sends `.js` files as `text/plain`, and browsers refuse ES modules sent that way, so the 3D page would not start. Any real web host sends the right type. Add `--lan` to let a phone on the same Wi-Fi open the page. Add `?fx=0` to the address to see the plain page.
+
+On Windows, PowerShell mein project folder kholkar `.\RUN_SITE.ps1` chalayein; phir browser mein `http://localhost:8081` kholein. Script terminal mein chalti rahegi, ise band karne par local website ruk jayegi.
+
+`tools/serve.py` ko `python -m http.server` ke badle use karein: kuch Windows computers par Python `.js` files ko `text/plain` bhejta hai, jisse browser 3D page ke modules chala nahi pata. Kisi live web host par local server chalane ki zaroorat nahi. Phone ko same Wi-Fi se test karna ho to server ko `--lan` ke saath chalayein. Plain page dekhne ke liye address ke aakhir mein `?fx=0` jodein.
 
 ## Tests
 
@@ -78,9 +93,10 @@ Not run: Lighthouse, a real GPU (frame rate and the adaptive pixel ratio are unt
 
 ## Files
 
-- `index.html`: content and structured data.
-- `styles.css`, `app.css`: tokens and layout; the phone previews and their 3D layers.
+- `index.html`, `download.html`: homepage and the Android download page.
+- `styles.css`, `app.css`, `download.css`: shared theme tokens and page layouts; the phone previews and their 3D layers.
 - `site.js`: theme, menu, reveal, the 2D hero strip, links from `site.config.js`.
+- `download.js`: download link and the shared website theme on the download page.
 - `js/main.js`: starts the 3D page or the plain one, runs the frame loop and the chapters. `js/chapters.js`, `js/journey.js`, `js/anatomy.js`: the scroll-driven chapters. `js/fx.js`: headings that rise word by word, the progress bar, the section ruler and buttons that lean towards the pointer. `js/gl/`: the WebGL2 stage, the slot formations, the camera poses and the shaders. `js/sim/`: the rules simulator.
 - `site.config.js`, `site.config.example.js`: your addresses.
 - `tools/stamp-site-url.mjs`: writes the canonical address, sitemap and robots line. `tools/serve.py`, `RUN_SITE.ps1`: a local server that sends the right file types. `tools/make-wordmark.py`: rebuilds `js/gl/wordmark-data.js` (the pills that spell Slotify at the end of the page) from `assets/logo-on-dark.webp`; needs `pillow` and `numpy`, and its result is already committed.

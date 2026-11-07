@@ -240,6 +240,42 @@ await step('the colour theme toggle switches, persists and starts from the syste
   });
 });
 
+await step('download page shares the saved theme and reveals only a configured safe app link', async () => {
+  const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, colorScheme: 'dark' });
+  const p = await ctx.newPage();
+  try {
+    await p.goto(base + '?fx=0');
+    await p.click('#theme');
+    assert.equal(await p.evaluate(() => document.documentElement.dataset.theme), 'light');
+
+    await p.goto(base + 'download.html');
+    assert.equal(await p.evaluate(() => document.documentElement.dataset.theme), 'light');
+    assert.equal(await p.evaluate(() => getComputedStyle(document.body).backgroundColor), 'rgb(247, 247, 249)');
+    assert.equal(await p.locator('#download-link').isVisible(), false);
+    assert.equal(await p.locator('#download-setup').isVisible(), true);
+    assert.equal(await noOverflow(p), true, 'download page overflows on a phone');
+
+    let appUrl = 'https://example.com/slotify';
+    await p.route('**/site.config.js', (r) => r.fulfill({ contentType: 'text/javascript', body: `window.SLOTIFY_SITE=${JSON.stringify({ appUrl })};` }));
+    await p.reload();
+    assert.equal(await p.locator('#download-link').isVisible(), true);
+    assert.equal(await p.getAttribute('#download-link', 'href'), 'https://example.com/slotify');
+    assert.equal(await p.getAttribute('#download-link', 'rel'), 'noopener noreferrer');
+
+    appUrl = 'javascript:alert(1)';
+    await p.reload();
+    assert.equal(await p.locator('#download-link').isVisible(), false);
+    assert.equal(await p.locator('#download-setup').isVisible(), true);
+
+    await p.click('#theme');
+    assert.equal(await p.evaluate(() => document.documentElement.dataset.theme), 'dark');
+    await p.goto(base + '?fx=0');
+    assert.equal(await p.evaluate(() => document.documentElement.dataset.theme), 'dark');
+  } finally {
+    await ctx.close();
+  }
+});
+
 await step('hero ruler (plain page): one slot is selected, the choice moves, only open times are chosen', async () => {
   await withPage({}, async (p) => {
     await p.locator('#ruler').scrollIntoViewIfNeeded();

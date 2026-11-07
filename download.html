@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Download Slotify for Android</title>
+  <meta name="description" content="Get Slotify for Android and make appointment booking simpler for you and your clients.">
+  <meta name="color-scheme" content="dark light">
+  <meta name="theme-color" content="#08080a" media="(prefers-color-scheme: dark)">
+  <meta name="theme-color" content="#f7f7f9" media="(prefers-color-scheme: light)">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Slotify">
+  <meta property="og:title" content="Download Slotify for Android">
+  <meta property="og:description" content="Get Slotify for Android and make appointment booking simpler for you and your clients.">
+  <meta property="og:image" content="assets/og.png">
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+  <link rel="preload" href="fonts/Inter-Regular.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="fonts/Inter-SemiBold.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="download.css">
+  <script>
+    try { var t = localStorage.getItem('slotify-site-theme'); if (t === 'light' || t === 'dark') document.documentElement.dataset.theme = t; } catch (e) {}
+  </script>
+</head>
+<body class="download-page">
+  <a class="skip" href="#main">Skip to content</a>
+  <header class="top">
+    <div class="wrap top-in">
+      <a class="brand" href="index.html" aria-label="Slotify home">
+        <img class="logo logo-on-dark" src="assets/logo-on-dark.webp" alt="" width="360" height="116">
+        <img class="logo logo-on-light" src="assets/logo-on-light.webp" alt="" width="360" height="116">
+      </a>
+      <nav class="nav download-nav" aria-label="Main">
+        <a href="index.html">Home</a>
+      </nav>
+      <div class="top-actions">
+        <button class="theme-btn" type="button" id="theme" aria-label="Switch colour theme"><span class="theme-disc" aria-hidden="true"></span></button>
+      </div>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="download-hero" aria-labelledby="download-title">
+      <div class="wrap download-layout">
+        <div class="download-copy">
+          <p class="eyebrow"><span class="t">SLOTIFY FOR ANDROID</span><span class="download-status"><i aria-hidden="true"></i> Made for your workday</span></p>
+          <h1 id="download-title">Your next appointment starts here.</h1>
+          <p class="lede">Keep your schedule clear, share your availability, and give clients an easier way to book.</p>
+          <div class="download-actions">
+            <a class="btn btn-primary download-button" id="download-link" href="#" hidden>
+              <span>Download for Android</span><span class="download-arrow" aria-hidden="true">↗</span>
+            </a>
+            <p class="download-setup" id="download-setup">The download link is being set up. Please check back soon.</p>
+          </div>
+          <ul class="download-points" aria-label="About the app">
+            <li><span aria-hidden="true">01</span>Appointments, without the back-and-forth</li>
+            <li><span aria-hidden="true">02</span>Live availability your clients can trust</li>
+            <li><span aria-hidden="true">03</span>Built for Android</li>
+          </ul>
+        </div>
+
+        <aside class="download-art" aria-label="Slotify app overview">
+          <div class="art-glow" aria-hidden="true"></div>
+          <div class="app-card">
+            <div class="app-card-top"><span class="app-mark">S</span><span class="app-card-name">SLOTIFY</span><span class="app-card-platform">ANDROID</span></div>
+            <div class="app-card-rule" aria-hidden="true"></div>
+            <p class="app-card-kicker">YOUR DAY, IN SYNC</p>
+            <p class="app-card-title">A little less<br>back-and-forth.</p>
+            <div class="app-card-slots" aria-hidden="true">
+              <span></span><span></span><span></span><span class="selected"></span><span></span><span></span><span></span>
+            </div>
+            <div class="app-card-foot"><span>YOUR SCHEDULE</span><span>READY WHEN YOU ARE</span></div>
+          </div>
+          <p class="art-caption"><span aria-hidden="true">✳</span> A calmer way to book time.</p>
+        </aside>
+      </div>
+    </section>
+    <section class="download-bottom" aria-label="More about Slotify">
+      <div class="wrap download-bottom-in">
+        <p>For professionals who work by appointment.</p>
+        <a class="link-arrow" href="index.html#features">Explore what Slotify can do</a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="download-footer">
+    <div class="wrap download-footer-in">
+      <a href="index.html">Slotify</a>
+      <span>Built by DEVELOPERS</span>
+      <span>Android app</span>
+    </div>
+  </footer>
+  <script src="site.config.js"></script>
+  <script src="download.js" defer></script>
+</body>
+</html>
